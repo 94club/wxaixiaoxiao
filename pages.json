@@ -14,11 +14,17 @@
 		},
 		{
 			"path": "pages/tabbar/tool"
+		},
+		{
+			"path": "pages/tabbar/yuan"
+		},
+		{
+			"path": "pages/tabbar/mood"
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
+		"navigationBarTitleText": "艾小小和风早早",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},
@@ -32,6 +38,16 @@
 			"iconPath": "static/api.png",
 			"selectedIconPath": "static/apiHL.png",
 			"text": "首页"
+		},{
+			"pagePath": "pages/tabbar/yuan",
+			"iconPath": "static/api.png",
+			"selectedIconPath": "static/apiHL.png",
+			"text": "心愿"
+		}, {
+			"pagePath": "pages/tabbar/mood",
+			"iconPath": "static/extui.png",
+			"selectedIconPath": "static/extuiHL.png",
+			"text": "心情"
 		}, {
 			"pagePath": "pages/tabbar/tool",
 			"iconPath": "static/extui.png",
