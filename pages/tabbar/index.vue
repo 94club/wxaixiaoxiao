@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view class="task-top">
-			<uni-search-bar class="search-bar" :radius="100" @input="input"/>
+			<uni-search-bar class="search-bar" :radius="100" @submit="input" placeholder="搜索痕迹"/>
 			<uniSlidingMenu />
 		</view>
 		<view class="task-content">
@@ -37,18 +37,40 @@
 				current: 0
 			}
 		},
+		computed: {
+			userInfo () {
+				return this.$store.state.userInfo
+			}
+		},
 		components: {
 			uniSearchBar,
 			uniSlidingMenu,
 			uniSegmentedControl
 		},
 		onLoad() {
-
+			if (this.userInfo.cpName) {
+				uni.showModal({
+					title: '提示',
+					content: '绑定对象获取更多体验',
+					confirmText: '去绑定',
+					cancelText: '取消',
+					success: function (res) {
+						if (res.confirm) {
+							console.log('用户点击确定')
+							uni.navigateTo({
+								url: '../bindName/bindName'
+							})
+						} else if (res.cancel) {
+							console.log('用户点击取消')
+						}
+					}
+				});
+			}
 		},
 		methods: {
 			input(res) {
         this.searchVal = res.value
-				// 发送网络请求  这个位置好像是节流
+				// 发送网络请求 置空数据
       },
 			onClickItem(index) {
 				if (this.current !== index) {

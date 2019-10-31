@@ -40,9 +40,9 @@
           size="18"/>
         <text class="placeholder">{{ placeholder }}</text>
       </view>
-   <!--   <text
+     <text
         class="uni-searchbar-form__cancel"
-        @click="cancel">取消</text> -->
+        @click="submit">确定</text>
     </view>
   </view>
 </template>
@@ -87,8 +87,8 @@ export default {
     clear () {
       this.searchVal = ''
     },
-    cancel () {
-			this.$emit('cancel', { value: this.searchVal })
+    submit () {
+			this.$emit('submit', { value: this.searchVal })
       this.searchVal = ''
       this.show = false
     },
