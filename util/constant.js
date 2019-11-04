@@ -1,21 +1,3 @@
-const wxUserReg = / ^[a-zA-Z]{1}[-_a-zA-Z0-9]{5,19}$/
-const wxPwdReg = / ^[a-zA-Z0-9]{6,10}$/
-const debug = true
-const url = debug ? 'http://xiaoai.jiaxiu.club:8002/' : 'https://xiaoai.jiaxiu.club/'
-const yuanTypes = [
-	{
-		value: 0,
-		name: '心愿任务'
-	},
-	{
-		value: 1,
-		name: '双人任务'
-	},
-	{
-		value: 2,
-		name: '特殊任务'
-	},
-]
 const destination = [
 	'欢迎您来到艾小小和风早早,希望您在这里可以收获开心',
 	'TA的目的： 分享心情，相互激励，相互促进，相互进步，收获开心',
@@ -23,22 +5,18 @@ const destination = [
 	'登录后请第一时间绑定另一个TA；登录后请第一时间绑定另一个TA；登录后请第一时间绑定另一个TA',
 	'有任何意见都可以加我微信muduo770@我'
 ]
-const wechatLogin = url + 'unauth/wechatLogin'
-const wechatRegister = url + 'unauth/wechatRegister'
-const userLogin = url + 'unauth/v1/userLogin'
-const getUserInfo = url + 'user/v1/getUserInfo'
-const saveYuan = url + 'user/v1/saveYuan'
-const saveMood = url + 'user/v1/saveMood'
-const getMood = url + 'user/v1/getMood'
+const wechatLogin = 'unauth/v1/wechatLogin'
+const wechatRegister = 'unauth/v1/wechatRegister'
+const wechatRegisterName = 'unauth/v1/wechatRegisterName'
+const getUserInfo = 'user/v1/getUserInfo'
+const saveYuan = 'user/v1/saveYuan'
+const saveMood = 'user/v1/saveMood'
+const getMood = 'user/v1/getMood'
 export default {
-	wxUserReg,
-	wxPwdReg,
 	destination,
-	url,
 	wechatLogin,
 	wechatRegister,
-	yuanTypes,
-	userLogin,
+	wechatRegisterName,
 	getUserInfo,
 	saveYuan,
 	saveMood,

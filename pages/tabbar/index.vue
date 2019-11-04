@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view class="task-top">
-			<uni-search-bar class="search-bar" :radius="100" @submit="input" placeholder="搜索痕迹"/>
+			<uni-search-bar class="search-bar" :radius="100" @submit="submit" placeholder="搜索痕迹"/>
 			<uniSlidingMenu />
 		</view>
 		<view class="task-content">
@@ -47,7 +47,7 @@
 			uniSlidingMenu,
 			uniSegmentedControl
 		},
-		onLoad() {
+		onShow() {
 			if (this.userInfo.cpName) {
 				uni.showModal({
 					title: '提示',
@@ -68,9 +68,14 @@
 			}
 		},
 		methods: {
-			input(res) {
+			submit(res) {
         this.searchVal = res.value
-				// 发送网络请求 置空数据
+				if (this.searchVal) {
+					// 发送网络请求 置空数据
+					
+				} else {
+					// 没有值先不管
+				}
       },
 			onClickItem(index) {
 				if (this.current !== index) {
