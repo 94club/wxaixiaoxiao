@@ -43,7 +43,7 @@
 												},
 												success: (res) => {
 													if (res.data && res.data.status === 200) {
-														// 微信登录成功
+														// 微信注册成功
 														uni.switchTab({
 															url: '/pages/tabbar/index'
 														})
@@ -104,16 +104,33 @@
 							uni.login({
 								success: (code) => {
 									if (code.code) {
-										this.$api.wechatRegister(code.code).then((res) => {
-											console.log(res)
-											// uni.switchTab({
-											// 	url: '/pages/bindName/bindName?from=register'
-											// })
-										}).catch((err) => {
-											uni.showToast({
-												title: '网络错误',
-												icon: 'none'
-											})
+										let token = uni.getStorageSync('token')
+										uni.request({
+											url: this.$constant.wechatRegister,
+											method: 'POST',
+											data: {code: code.code, nickName: weInfo.nickName, avatarUrl: weInfo.avatarUrl},
+											success: (res) => {
+												if (res.data.status === 401) {
+													uni.redirectTo({
+														url: '/pages/index/index'
+													})
+													uni.showToast({
+														icon: 'none',
+														title: '登录信息失效，请重新登录'
+													})
+												}
+												if (res.data.status === 200) {
+													uni.switchTab({
+														url: '/pages/bindName/bindName?from=register'
+													})
+												}
+												if (res.data.status === 0) {
+													uni.showToast({
+														icon: 'none',
+														title: res.data.message
+													})
+												}
+											}
 										})
 									} else {
 										uni.hideLoading();

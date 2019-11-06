@@ -11,16 +11,17 @@
 					<uni-segmented-control :current="current" :values="items" @clickItem="onClickItem" style-type="button" active-color="#4cd964"></uni-segmented-control>
 				</view>
 			</view>
-			<view class="task-list"></view>
-			<image src="https://placehold.it/375x80" mode=""></image>
-			<image src="https://placehold.it/375x80" mode=""></image>
-			<image src="https://placehold.it/375x80" mode=""></image>
-			<image src="https://placehold.it/375x80" mode=""></image>
-			<image src="https://placehold.it/375x80" mode=""></image>
-			<image src="https://placehold.it/375x80" mode=""></image>
-			<image src="https://placehold.it/375x80" mode=""></image>
-			<image src="https://placehold.it/375x80" mode=""></image>
-			<image src="https://placehold.it/375x80" mode=""></image>
+			<view class="task-list">
+				<image src="https://placehold.it/375x80" mode=""></image>
+				<image src="https://placehold.it/375x80" mode=""></image>
+				<image src="https://placehold.it/375x80" mode=""></image>
+				<image src="https://placehold.it/375x80" mode=""></image>
+				<image src="https://placehold.it/375x80" mode=""></image>
+				<image src="https://placehold.it/375x80" mode=""></image>
+				<image src="https://placehold.it/375x80" mode=""></image>
+				<image src="https://placehold.it/375x80" mode=""></image>
+				<image src="https://placehold.it/375x80" mode=""></image>
+			</view>
 		</view>
 	</view>
 </template>
@@ -34,12 +35,17 @@
 			return {
 				searchVal: '',
 				items: ['进行中','审核中','已完成'],
-				current: 0
+				current: 0,
+				yuanList: [],
+				moodList: []
 			}
 		},
 		computed: {
 			userInfo () {
 				return this.$store.state.userInfo
+			},
+			token () {
+				return this.$store.state.token
 			}
 		},
 		components: {
@@ -58,7 +64,7 @@
 						if (res.confirm) {
 							console.log('用户点击确定')
 							uni.navigateTo({
-								url: '../bindName/bindName'
+								url: '/pages/bindName/bindName'
 							})
 						} else if (res.cancel) {
 							console.log('用户点击取消')
@@ -66,6 +72,9 @@
 					}
 				});
 			}
+		},
+		onLoad () {
+			// 获取正在进行中的心愿任务
 		},
 		methods: {
 			submit(res) {

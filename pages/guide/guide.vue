@@ -12,7 +12,44 @@
 			};
 		},
 		onLoad() {
-			this.$api.getUserInfo().then((res) => {}).catch((err) => {})
+			this.getuserInfo()
+		},
+		methods: {
+			getuserInfo () {
+				let token = uni.getStorageSync('token')
+				uni.request({
+					url: this.$constant.getUserInfo,
+					header: {
+							'Authorization': 'Bearer ' + token
+					},
+					success: (res) => {
+						if (res.data.status === 401) {
+							uni.redirectTo({
+								url: '/pages/index/index'
+							})
+							uni.showToast({
+								icon: 'none',
+								title: '登录信息失效，请重新登录'
+							})
+						}
+						if (res.data.status === 200) {
+							that.$store.commit('saveUserInfo', res.data.data)
+						}
+						if (res.data.status === 0) {
+							uni.showToast({
+								icon: 'none',
+								title: res.data.message
+							})
+						}
+					},
+					fail: () => {
+						uni.showToast({
+							icon: 'none',
+							title: '网络错误，请检查网络'
+						})
+					}
+				})
+			}
 		}
 	}
 </script>
