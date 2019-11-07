@@ -11,10 +11,13 @@ const url = 'https://xiaoai.jiaxiu.club/'
 const wechatLogin = url + 'unauth/v1/wechatLogin'
 const wechatRegister = url + 'unauth/v1/wechatRegister'
 const wechatRegisterName = url + 'unauth/v1/wechatRegisterName'
+const getAllUser = url + 'user/v1/getAllUser'
 const getUserInfo = url + 'user/v1/getUserInfo'
 const saveYuan = url + 'user/v1/saveYuan'
 const saveMood = url + 'user/v1/saveMood'
 const getMood = url + 'user/v1/getMood'
+const resetBind = url + 'user/v1/resetBind'
+const finishBind = url + 'user/v1/finishBind'
 export default {
 	url,
 	wxUserReg,
@@ -25,5 +28,8 @@ export default {
 	getUserInfo,
 	saveYuan,
 	saveMood,
-	getMood
+	getMood,
+	getAllUser,
+	resetBind,
+	finishBind
 }

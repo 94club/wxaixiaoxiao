@@ -33,7 +33,10 @@
 							})
 						}
 						if (res.data.status === 200) {
-							that.$store.commit('saveUserInfo', res.data.data)
+							this.$store.commit('saveUserInfo', res.data.data)
+							uni.switchTab({
+								url: '/pages/tabbar/index'
+							})
 						}
 						if (res.data.status === 0) {
 							uni.showToast({

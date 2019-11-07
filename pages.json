@@ -13,7 +13,10 @@
 			}
 		},
 		{
-			"path": "pages/tabbar/index"
+			"path": "pages/tabbar/index",
+			"style": {
+				"enablePullDownRefresh": true
+			}
 		},
 		{
 			"path": "pages/tabbar/mine"

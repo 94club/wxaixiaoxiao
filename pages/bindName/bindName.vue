@@ -1,12 +1,12 @@
 <template>
 	<view>
 		<uni-search-bar class="search-bar" :radius="100" @submit="submit" placeholder="搜索痕迹"/>
-		<view v-for="(item, index) in bindUserList" :key="index">
+		<view v-for="(item, index) in bindUserList" :key="index" class="bind-item">
 			{{item.nickName}}
-			<button type="primary" @tap="preBind(item)">去绑定</button>
+			<view @tap="openBind(item)">去绑定</view>
 		</view>
 		<view v-if="bindShow" class="bind-nick">
-			<uni-icon class="bind-nick-close" type="closeempty" size="24"></uni-icon>
+			<uni-icon class="bind-nick-close" type="closeempty" size="24" @tap="closeBind"></uni-icon>
 			<view class="bind-nick-form">
 				<input class="uni-input" v-model="cpWechat" placeholder="请输入你的微信"/>
 			</view>
@@ -36,15 +36,22 @@
 		components:{
 			uniIcon
 		},
-		onLoad (option) { // option为object类型，会序列化上个页面传递的参数
+		onLoad () { // option为object类型，会序列化上个页面传递的参数
 			this.getAllUser()
     },
 		computed: {
 			userInfo () {
 				return this.$store.state.userInfo
+			},
+			token () {
+				return this.$store.state.token
 			}
 		},
 		methods: {
+			closeBind () {
+				this.cpWechat = ''
+				this.bindShow = false
+			},
 			submit(res) {
 			  this.searchVal = res.value
 				if (this.searchVal) {
@@ -59,6 +66,9 @@
 					url: this.$constant.getAllUser,
 					header: {
 						'Authorization': 'Bearer ' + this.token
+					},
+					data: {
+						id: this.userInfo.id
 					},
 					success: (res) => {
 						if (res.data.status === 401) {
@@ -105,7 +115,10 @@
 							})
 						}
 						if (res.data.status === 200) {
-							that.$store.commit('saveUserInfo', res.data.data)
+							this.$store.commit('saveUserInfo', res.data.data)
+							uni.switchTab({
+								url: '/pages/tabbar/index'
+							})
 						}
 						if (res.data.status === 0) {
 							uni.showToast({
@@ -122,7 +135,7 @@
 					}
 				})
 			},
-			preBind (item) {
+			openBind (item) {
 				this.userId = item.id
 				this.bindShow = true
 			},
@@ -211,5 +224,9 @@
 				font-size: 24rpx;
 			}
 		}
+	}
+	.bind-item {
+		border: 2upx solid red;
+		padding: 4upx
 	}
 </style>
