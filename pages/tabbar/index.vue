@@ -63,7 +63,7 @@
 			if (this.userInfo.isBind === 1) {
 				uni.showModal({
 					title: '提示',
-					content: '绑定对象获取更多体验;如已绑定，下拉刷新状态',
+					content: '去绑定对象获取更多体验;如已绑定，下拉刷新状态',
 					confirmText: '去绑定',
 					cancelText: '取消',
 					success: function (res) {
