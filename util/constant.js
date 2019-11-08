@@ -5,7 +5,7 @@ const destination = [
 	'TA的目的： 分享心情，相互激励，相互促进，相互进步，收获开心',
 	'TA的特点： 主要通过两人相互许愿对方实现的形式达到TA的目的，在这期间系统也会出一些活动和任务促进双方',
 	'登录后请第一时间绑定另一个TA；登录后请第一时间绑定另一个TA；登录后请第一时间绑定另一个TA',
-	'有任何意见都可以加我微信muduo770@我'
+	'有任何意见都可以加我微信feng--zao'
 ]
 const url = 'https://xiaoai.jiaxiu.club/'
 const wechatLogin = url + 'unauth/v1/wechatLogin'
@@ -13,7 +13,8 @@ const wechatRegister = url + 'unauth/v1/wechatRegister'
 const wechatRegisterName = url + 'unauth/v1/wechatRegisterName'
 const getAllUser = url + 'user/v1/getAllUser'
 const getUserInfo = url + 'user/v1/getUserInfo'
-const saveYuan = url + 'user/v1/saveYuan'
+const addYuan = url + 'user/v1/addYuan'
+const getYuan = url + 'user/v1/getYuan'
 const saveMood = url + 'user/v1/saveMood'
 const getMood = url + 'user/v1/getMood'
 const resetBind = url + 'user/v1/resetBind'
@@ -26,7 +27,8 @@ export default {
 	wechatRegister,
 	wechatRegisterName,
 	getUserInfo,
-	saveYuan,
+	addYuan,
+	getYuan,
 	saveMood,
 	getMood,
 	getAllUser,

@@ -25,10 +25,16 @@
 			"path": "pages/tabbar/tool"
 		},
 		{
-			"path": "pages/tabbar/yuan"
+			"path": "pages/tabbar/yuan",
+			"style": {
+				"enablePullDownRefresh": true
+			}
 		},
 		{
-			"path": "pages/tabbar/mood"
+			"path": "pages/tabbar/mood",
+			"style": {
+				"enablePullDownRefresh": true
+			}
 		},
 		{
 			"path": "pages/bindName/bindName",

@@ -2,25 +2,31 @@
 	<view>
 		<view class="task-top">
 			<uni-search-bar class="search-bar" :radius="100" @submit="submit" placeholder="搜索痕迹"/>
-			<uniSlidingMenu />
+			<uniSlidingMenu :activeIndex="activeIndex" />
+		</view>
+		<view v-if="shareBoxShow" class="share-box">
+			<view class="content">快去分享小程序通知他/她吧;如已绑定，下拉刷新状态</view>
+			<view class="btns">
+				<button type="default" @tap="shareBoxShow = false">取消</button>
+				<button open-type="share">去分享</button>
+			</view>
 		</view>
 		<view class="task-content">
 			<view class="task-statistic">
-				<view class="task-statistic-left">88条心愿在进行中</view>
+				<view class="task-statistic-left">{{current === 0 ? yuanList.length + '条心愿痕迹' : moodList.length + '条心情痕迹'}}</view>
 				<view class="task-statistic-right">
 					<uni-segmented-control :current="current" :values="items" @clickItem="onClickItem" style-type="button" active-color="#4cd964"></uni-segmented-control>
 				</view>
 			</view>
-			<view class="task-list">
-				<image src="https://placehold.it/375x80" mode=""></image>
-				<image src="https://placehold.it/375x80" mode=""></image>
-				<image src="https://placehold.it/375x80" mode=""></image>
-				<image src="https://placehold.it/375x80" mode=""></image>
-				<image src="https://placehold.it/375x80" mode=""></image>
-				<image src="https://placehold.it/375x80" mode=""></image>
-				<image src="https://placehold.it/375x80" mode=""></image>
-				<image src="https://placehold.it/375x80" mode=""></image>
-				<image src="https://placehold.it/375x80" mode=""></image>
+			<view class="task-list" v-if="activeIndex === '0'">
+				<view class="task-list-item" v-for="(item, yuanIndex) in yuanList" :key="yuanIndex">
+					{{item.id}}--
+				</view>
+			</view>
+			<view class="task-list" v-if="activeIndex === '1'">
+				<view class="task-list-item"  v-for="(item, moodIndex) in moodList" :key="moodIndex">
+					{{mood.id}}--
+				</view>
 			</view>
 		</view>
 	</view>
@@ -33,11 +39,18 @@
 	export default {
 		data() {
 			return {
-				searchVal: '',
+				keyword: '',
 				items: ['进行中','审核中','已完成'],
 				current: 0,
+				status: 0,
+				activeIndex: '0',
+				reason: 2, // 默认首页搜索  
 				yuanList: [],
-				moodList: []
+				moodList: [],
+				shareBoxShow: false,
+				pageSize: 20,
+				pageNo: 1,
+				operationFlag: 1, // 1 刚进来 或者下拉刷新 或者新增   2 上拉加载
 			}
 		},
 		computed: {
@@ -53,8 +66,21 @@
 			uniSlidingMenu,
 			uniSegmentedControl
 		},
-		 onPullDownRefresh() {
-			this.getUserInfo()
+		onShareAppMessage(res) {
+			if (res.from === 'button') {
+				// 来自页面内转发按钮
+				console.log(res.target)
+			}
+			return {
+				title: '艾小小和风早早',
+				// 要转发至路径
+				path: 'pages/guide/guide'
+			}
+		},
+	  onPullDownRefresh() {
+			this.operationFlag = 1
+			this.getUserInfo() // 刷新绑定信息
+			this.getYuanList()
 			setTimeout(function () {
 				uni.stopPullDownRefresh()
 			}, 1000)
@@ -181,32 +207,80 @@
 				});
 			}
 			if (this.userInfo.isBind === 2 && !this.userInfo.cpName) {
-				uni.showModal({
-					title: '提示',
-					content:  '快去分享小程序通知他/她吧;如已绑定，下拉刷新状态',
-					confirmText: '分享',
-					cancelText: '取消',
-					success(res) {
-						if (res.confirm) {
-							// 绑定
-							uni.showToast({
-								icon: 'none',
-								title: '正在开发中...'
-							})
-						}
-					}
-				})
+				this.shareBoxShow = true
 			}
+			this.operationFlag = 1
+			this.getYuanList()
 		},
 		onLoad () {
 			// 获取正在进行中的心愿任务
 		},
+		onReachBottom () {
+			this.pageNo++
+			this.operationFlag = 2
+			uni.showLoading({
+				title: '加载'
+			})
+			setTimeout(() => {
+				uni.hideLoading()
+			}, 2000)
+			this.getYuanList()
+		},
 		methods: {
+			getYuanList () {
+				if (this.current === 0) {
+					this.status = 1
+				}
+				if (this.current === 1) {
+					this.status = 2
+				}
+				if (this.current === 2) {
+					this.status = 3
+				}
+				uni.request({
+					url: this.$constant.getYuan,
+					header: {
+						'Authorization': 'Bearer ' + this.token
+					},
+					data: {
+						status: this.status,
+						reason: this.reason,
+						keyword: this.keyword,
+						pageSize: this.pageSize,
+						pageNo: this.pageNo
+					},
+					success: (res) => {
+						if (res.data.status === 401) {
+							uni.redirectTo({
+								url: '/pages/index/index'
+							})
+							uni.showToast({
+								icon: 'none',
+								title: '登录信息失效，请重新登录'
+							})
+						}
+						if (res.data.status === 200) {
+							if (this.operationFlag === 1) {
+								this.yuanList = res.data.data
+							}
+							if (this.operationFlag === 2) {
+								this.yuanList = this.yuanList.concat(res.data.data)
+							}
+						}
+						if (res.data.status === 0) {
+							uni.showToast({
+								icon: 'none',
+								title: res.data.message
+							})
+						}
+					}
+				})
+			},
 			getUserInfo () {
 				uni.request({
 					url: this.$constant.getUserInfo,
 					header: {
-							'Authorization': 'Bearer ' + this.token
+						'Authorization': 'Bearer ' + this.token
 					},
 					success: (res) => {
 						if (res.data.status === 401) {
@@ -237,17 +311,18 @@
 				})
 			},
 			submit(res) {
-        this.searchVal = res.value
-				if (this.searchVal) {
+        this.keyword = res.value
+				if (this.keyword) {
 					// 发送网络请求 置空数据
-					
+					this.getYuanList()
 				} else {
 					// 没有值先不管
 				}
       },
 			onClickItem(index) {
-				if (this.current !== index) {
-					this.current = index;
+				if (this.status !== index) {
+					this.status = index
+					this.getYuanList()
 				}
 			}
 		}
@@ -279,8 +354,24 @@
 			flex:1;
 		}
 	}
-	image {
-		width: 750rpx;
-		height: 160rpx;
+	.share-box {
+		height: 400upx;
+		width: 600upx;
+		padding: 20upx;
+		position: fixed;
+		top: 200upx;
+		left: 50%;
+		transform: translateX(-50%);
+		border: 2upx solid red;
+		.content {
+			text-align: center;
+		}
+		.btns {
+			display: flex;
+			button {
+				font-size: 24upx;
+				width: 200upx;
+			}
+		}
 	}
 </style>

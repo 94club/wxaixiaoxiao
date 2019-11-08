@@ -109,7 +109,6 @@
 									uni.login({
 										success: (code) => {
 											if (code.code) {
-												let token = uni.getStorageSync('token')
 												uni.request({
 													url: this.$constant.wechatRegister,
 													method: 'POST',

@@ -62,10 +62,12 @@
 				}
 			},
 			getAllUser () {
+				let token = uni.getStorageSync('token')
 				uni.request({
 					url: this.$constant.getAllUser,
 					header: {
-						'Authorization': 'Bearer ' + this.token
+						// 'Authorization': 'Bearer ' + this.token
+						'Authorization': 'Bearer ' + token
 					},
 					data: {
 						id: this.userInfo.id
@@ -99,10 +101,12 @@
 				})
 			},
 			getUserInfo () {
+				let token = uni.getStorageSync('token')
 				uni.request({
 					url: this.$constant.getUserInfo,
 					header: {
-							'Authorization': 'Bearer ' + this.token
+						// 'Authorization': 'Bearer ' + this.token
+						'Authorization': 'Bearer ' + token
 					},
 					success: (res) => {
 						if (res.data.status === 401) {
@@ -147,6 +151,7 @@
 					})
 					return
 				}
+				let token = uni.getStorageSync('token')
 				uni.request({
 					url: this.$constant.wechatRegisterName,
 					method: 'POST',
@@ -157,7 +162,8 @@
 					  userId: this.userId
 					},
 					header: {
-						'Authorization': 'Bearer ' + this.token
+						// 'Authorization': 'Bearer ' + this.token
+						'Authorization': 'Bearer ' + token
 					},
 					success: (res) => {
 						if (res.data.status === 401) {
