@@ -10,6 +10,9 @@
 				<view class="task-statistic-right">
 					<uni-segmented-control :current="current" :values="items" @clickItem="onClickItem" style-type="button" active-color="#4cd964"></uni-segmented-control>
 				</view>
+			<view>
+				<button open-type="share">分享</button>	
+			</view>
 			</view>
 			<view class="task-list">
 				<image src="https://placehold.it/375x80" mode=""></image>
@@ -53,6 +56,17 @@
 			uniSlidingMenu,
 			uniSegmentedControl
 		},
+		onShareAppMessage(res) {
+			if (res.from === 'button') {
+				// 来自页面内转发按钮
+				console.log(res.target)
+			}
+			return {
+				title: '自定义转发标题',
+				// 要转发至路径
+				path: 'pages/tabbar/index'
+			}
+		},
 		 onPullDownRefresh() {
 			this.getUserInfo()
 			setTimeout(function () {
@@ -60,143 +74,143 @@
 			}, 1000)
 		},
 		onShow() {
-			if (this.userInfo.isBind === 1) {
-				uni.showModal({
-					title: '提示',
-					content: '绑定对象获取更多体验;如已绑定，下拉刷新状态',
-					confirmText: '去绑定',
-					cancelText: '取消',
-					success: function (res) {
-						if (res.confirm) {
-							console.log('用户点击确定')
-							uni.navigateTo({
-								url: '/pages/bindName/bindName'
-							})
-						} else if (res.cancel) {
-							console.log('用户点击取消')
-						}
-					}
-				});
-			}
-			if (this.userInfo.isBind === 2 && this.userInfo.cpName) {
-				uni.showModal({
-					title: '提示',
-					content:  this.userInfo.cpName + '(微信号' + this.userInfo.cpWechat + ')' + '请求与你绑定',
-					confirmText: '同意',
-					cancelText: '不同意',
-					success: (res) => {
-						if (res.confirm) {
-							// 绑定
-							uni.request({
-								url: this.$constant.finishBind,
-								method: 'POST',
-								header: {
-									'Authorization': 'Bearer ' + this.token
-								},
-								data: {
-									cpId: this.userInfo.cpId,
-									userId: this.userInfo.id,
-									nickName: this.userInfo.nickName
-								},
-								success: (res) => {
-									if (res.data.status === 401) {
-										uni.redirectTo({
-											url: '/pages/index/index'
-										})
-										uni.showToast({
-											icon: 'none',
-											title: '登录信息失效，请重新登录'
-										})
-									}
-									if (res.data.status === 200) {
-										uni.showToast({
-											icon: 'none',
-											title: res.data.message
-										})
-										this.getUserInfo()
-									}
-									if (res.data.status === 0) {
-										uni.showToast({
-											icon: 'none',
-											title: res.data.message
-										})
-									}
-								},
-								fail: () => {
-									uni.showToast({
-										icon: 'none',
-										title: '网络错误，请检查网络'
-									})
-								}
-							})
-						} else if (res.cancel) {
-							uni.showToast({
-								icon: 'none',
-								title: '双方将重置为空闲状态'
-							})
-							// 重置状态
-							uni.request({
-								url: this.$constant.resetBind,
-								method: 'POST',
-								header: {
-									'Authorization': 'Bearer ' + this.token
-								},
-								data: {
-									cpId: this.userInfo.cpId,
-									userId: this.userInfo.id
-								},
-								success: (res) => {
-									if (res.data.status === 401) {
-										uni.redirectTo({
-											url: '/pages/index/index'
-										})
-										uni.showToast({
-											icon: 'none',
-											title: '登录信息失效，请重新登录'
-										})
-									}
-									if (res.data.status === 200) {
-										uni.showToast({
-											icon: 'none',
-											title: res.data.message
-										})
-										this.getUserInfo()
-									}
-									if (res.data.status === 0) {
-										uni.showToast({
-											icon: 'none',
-											title: res.data.message
-										})
-									}
-								},
-								fail: () => {
-									uni.showToast({
-										icon: 'none',
-										title: '网络错误，请检查网络'
-									})
-								}
-							})
-						}
-					}
-				});
-			}
-			if (this.userInfo.isBind === 2 && !this.userInfo.cpName) {
-				uni.showModal({
-					title: '提示',
-					content:  '快去分享小程序通知他/她吧;如已绑定，下拉刷新状态',
-					confirmText: '分享',
-					cancelText: '取消',
-					success(res) {
-						if (res.confirm) {
-							// 绑定
-							uni.showToast({
-								icon: 'none',
-								title: '正在开发中...'
-							})
-						}
-					}
-				})
-			}
+			// if (this.userInfo.isBind === 1) {
+			// 	uni.showModal({
+			// 		title: '提示',
+			// 		content: '绑定对象获取更多体验;如已绑定，下拉刷新状态',
+			// 		confirmText: '去绑定',
+			// 		cancelText: '取消',
+			// 		success: function (res) {
+			// 			if (res.confirm) {
+			// 				console.log('用户点击确定')
+			// 				uni.navigateTo({
+			// 					url: '/pages/bindName/bindName'
+			// 				})
+			// 			} else if (res.cancel) {
+			// 				console.log('用户点击取消')
+			// 			}
+			// 		}
+			// 	});
+			// }
+			// if (this.userInfo.isBind === 2 && this.userInfo.cpName) {
+			// 	uni.showModal({
+			// 		title: '提示',
+			// 		content:  this.userInfo.cpName + '(微信号' + this.userInfo.cpWechat + ')' + '请求与你绑定',
+			// 		confirmText: '同意',
+			// 		cancelText: '不同意',
+			// 		success: (res) => {
+			// 			if (res.confirm) {
+			// 				// 绑定
+			// 				uni.request({
+			// 					url: this.$constant.finishBind,
+			// 					method: 'POST',
+			// 					header: {
+			// 						'Authorization': 'Bearer ' + this.token
+			// 					},
+			// 					data: {
+			// 						cpId: this.userInfo.cpId,
+			// 						userId: this.userInfo.id,
+			// 						nickName: this.userInfo.nickName
+			// 					},
+			// 					success: (res) => {
+			// 						if (res.data.status === 401) {
+			// 							uni.redirectTo({
+			// 								url: '/pages/index/index'
+			// 							})
+			// 							uni.showToast({
+			// 								icon: 'none',
+			// 								title: '登录信息失效，请重新登录'
+			// 							})
+			// 						}
+			// 						if (res.data.status === 200) {
+			// 							uni.showToast({
+			// 								icon: 'none',
+			// 								title: res.data.message
+			// 							})
+			// 							this.getUserInfo()
+			// 						}
+			// 						if (res.data.status === 0) {
+			// 							uni.showToast({
+			// 								icon: 'none',
+			// 								title: res.data.message
+			// 							})
+			// 						}
+			// 					},
+			// 					fail: () => {
+			// 						uni.showToast({
+			// 							icon: 'none',
+			// 							title: '网络错误，请检查网络'
+			// 						})
+			// 					}
+			// 				})
+			// 			} else if (res.cancel) {
+			// 				uni.showToast({
+			// 					icon: 'none',
+			// 					title: '双方将重置为空闲状态'
+			// 				})
+			// 				// 重置状态
+			// 				uni.request({
+			// 					url: this.$constant.resetBind,
+			// 					method: 'POST',
+			// 					header: {
+			// 						'Authorization': 'Bearer ' + this.token
+			// 					},
+			// 					data: {
+			// 						cpId: this.userInfo.cpId,
+			// 						userId: this.userInfo.id
+			// 					},
+			// 					success: (res) => {
+			// 						if (res.data.status === 401) {
+			// 							uni.redirectTo({
+			// 								url: '/pages/index/index'
+			// 							})
+			// 							uni.showToast({
+			// 								icon: 'none',
+			// 								title: '登录信息失效，请重新登录'
+			// 							})
+			// 						}
+			// 						if (res.data.status === 200) {
+			// 							uni.showToast({
+			// 								icon: 'none',
+			// 								title: res.data.message
+			// 							})
+			// 							this.getUserInfo()
+			// 						}
+			// 						if (res.data.status === 0) {
+			// 							uni.showToast({
+			// 								icon: 'none',
+			// 								title: res.data.message
+			// 							})
+			// 						}
+			// 					},
+			// 					fail: () => {
+			// 						uni.showToast({
+			// 							icon: 'none',
+			// 							title: '网络错误，请检查网络'
+			// 						})
+			// 					}
+			// 				})
+			// 			}
+			// 		}
+			// 	});
+			// }
+			// if (this.userInfo.isBind === 2 && !this.userInfo.cpName) {
+			// 	uni.showModal({
+			// 		title: '提示',
+			// 		content:  '快去分享小程序通知他/她吧;如已绑定，下拉刷新状态',
+			// 		confirmText: '分享',
+			// 		cancelText: '取消',
+			// 		success(res) {
+			// 			if (res.confirm) {
+			// 				// 绑定
+			// 				uni.showToast({
+			// 					icon: 'none',
+			// 					title: '正在开发中...'
+			// 				})
+			// 			}
+			// 		}
+			// 	})
+			// }
 		},
 		onLoad () {
 			// 获取正在进行中的心愿任务
