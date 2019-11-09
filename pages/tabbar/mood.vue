@@ -2,30 +2,14 @@
 	<view class="content">
 		<custom-header right-icon="plusempty" @clickRight="showMoodBox" :title="title" class="header-fixed" :shadow="false"></custom-header>
 		<view class="add-yuan mt88" v-show="addShow">
-		  <form @submit="submitMood">
-				<view class="form-item">
-					<view class="form-item-left">执行人</view>
-					<view class="form-item-right">
-						<radio-group @change="radioChange">
-							<label class="uni-list-cell uni-list-cell-pd" v-for="(item, index) in items" :key="item.value">
-								<view><radio :value="item.value" :checked="index === current" /></view>
-								<view>{{ item.text }}</view>
-							</label>
-						</radio-group>
-					</view>
-				</view>
-				<view class="form-item">
-					<view class="form-item-left">奖励愿币</view>
-					<view class="form-item-right">
-						<input class="uni-input" v-model="amount" type="number" />
-					</view>
-				</view>
-				<view class="form-item">
-					<view class="form-item-left">心愿描述</view>
-					<view class="form-item-right">
-						<textarea @blur="bindTextAreaBlur" auto-height />
-					</view>
-				</view>
+			<form @submit="submitMood">
+				<view class="form-item"><textarea @blur="bindTextAreaBlur" auto-height />{{ voicePath }}</view>
+				<button type="primary" @tap="uploadImg">上传图片</button>
+				<button type="primary" @tap="startRecord">开始录音</button>
+				<button type="primary" @tap="stopRecord">停止录音</button>
+				<button type="primary" @tap="playVoice">播放录音</button>
+				<button type="primary" @tap="uploadVideo">上传视频</button>
+				<video :src="videoSrc"></video>
 				<button type="primary" form-type="submit">添加</button>
 			</form>
 		</view>
@@ -36,6 +20,9 @@
 </template>
 
 <script>
+const recorderManager = uni.getRecorderManager();
+const innerAudioContext = uni.createInnerAudioContext();
+innerAudioContext.autoplay = true;
 export default {
 	data() {
 		return {
@@ -46,46 +33,118 @@ export default {
 			pageNo: 1,
 			current: 0,
 			des: '',
-			operationFlag: 1 // 1 刚进来 或者下拉刷新 或者新增   2 上拉加载
+			operationFlag: 1, // 1 刚进来 或者下拉刷新 或者新增   2 上拉加载
+			imageStrList: '',
+			videoSrc: '',
+			voicePath: '',
+			imgCount: 9
 		};
 	},
 	onPullDownRefresh() {
-		this.operationFlag = 1
-		this.getMoodList()
-		setTimeout(function () {
-			uni.stopPullDownRefresh()
-		}, 1000)
+		this.operationFlag = 1;
+		this.getMoodList();
+		setTimeout(function() {
+			uni.stopPullDownRefresh();
+		}, 1000);
 	},
-	onReachBottom () {
-		this.pageNo++
-		this.operationFlag = 2
+	onReachBottom() {
+		this.pageNo++;
+		this.operationFlag = 2;
 		uni.showLoading({
 			title: '加载'
-		})
+		});
 		setTimeout(() => {
-			uni.hideLoading()
-		}, 2000)
-		this.getMoodList()
+			uni.hideLoading();
+		}, 2000);
+		this.getMoodList();
 	},
 	onShow() {
 		this.getMoodList();
 	},
+	onLoad() {
+		let self = this;
+		recorderManager.onStop(function(res) {
+			console.log('recorder stop' + JSON.stringify(res));
+			self.voicePath = res.tempFilePath;
+		});
+	},
 	computed: {
 		userInfo() {
-			return this.$store.state.userInfo
+			return this.$store.state.userInfo;
 		},
 		token() {
-			return this.$store.state.token
+			return this.$store.state.token;
 		}
 	},
 	methods: {
-		bindTextAreaBlur (e) {
-			this.des = e.detail.value
+		uploadImg() {
+			uni.chooseImage({
+				count: this.imgCount,
+				sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+				sourceType: ['album'], //从相册选择
+				success: res => {
+					console.log(JSON.stringify(res.tempFilePaths));
+					this.imgCount -= res.tempFilePaths.length;
+				}
+			});
 		},
-		showMoodBox () {
-			this.addShow = true
+		startRecord() {
+			console.log('开始录音');
+			wx.getSetting({
+				success: (res) =>{
+					if (res.authSetting['scope.record']) {
+						console.log('录音开始')
+						recorderManager.start({ format: 'mp3' });
+					}
+					else {
+						this.showSettingToast("授权信息才可以登录~")
+					}
+				}
+			})
 		},
-		submitMood () {
+		stopRecord() {
+			console.log('录音结束');
+			recorderManager.stop();
+		},
+		playVoice() {
+			console.log('播放录音');
+			if (this.voicePath) {
+				innerAudioContext.src = this.voicePath;
+				innerAudioContext.play();
+			}
+		},
+		showSettingToast (e) {
+			wx.showModal({
+				title: '提示！',
+				confirmText: '去设置',
+				showCancel: false,
+				content: e,
+				success: function(res) {
+					if (res.confirm) {
+						wx.navigateTo({
+							url: '/pages/authSetting/authSetting',
+						})
+					}
+				}
+			})
+		},
+		uploadVideo() {
+		  let self = this;
+			uni.chooseVideo({
+				count: 1,
+				sourceType: ['camera', 'album'],
+				success: function (res) {
+					self.videoSrc = res.tempFilePath
+				}
+			})
+		},
+		bindTextAreaBlur(e) {
+			this.des = e.detail.value;
+		},
+		showMoodBox() {
+			this.addShow = true;
+		},
+		submitMood() {
 			// 表单校验
 			uni.request({
 				url: this.$constant.addMood,
@@ -110,13 +169,13 @@ export default {
 						});
 					}
 					if (res.data.status === 200) {
-						this.moodList = []
-						this.addShow = false
+						this.moodList = [];
+						this.addShow = false;
 						uni.showToast({
 							icon: 'none',
 							title: '添加成功'
-						})
-						this.getMoodList()
+						});
+						this.getMoodList();
 					}
 					if (res.data.status === 0) {
 						uni.showToast({
@@ -125,7 +184,7 @@ export default {
 						});
 					}
 				}
-			})
+			});
 		},
 		onReachBottom() {
 			this.pageNo++;
@@ -158,10 +217,10 @@ export default {
 					}
 					if (res.data.status === 200) {
 						if (this.operationFlag === 1) {
-							this.moodList = res.data.data
+							this.moodList = res.data.data;
 						}
 						if (this.operationFlag === 2) {
-							this.moodList = this.moodList.concat(res.data.data)
+							this.moodList = this.moodList.concat(res.data.data);
 						}
 					}
 					if (res.data.status === 0) {
@@ -178,7 +237,7 @@ export default {
 </script>
 
 <style lang="scss">
-	.add-yuan {
-		margin-top: 80upx
-	}
+.add-yuan {
+	margin-top: 80upx;
+}
 </style>
