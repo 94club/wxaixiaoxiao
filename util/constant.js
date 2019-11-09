@@ -15,7 +15,7 @@ const getAllUser = url + 'user/v1/getAllUser'
 const getUserInfo = url + 'user/v1/getUserInfo'
 const addYuan = url + 'user/v1/addYuan'
 const getYuan = url + 'user/v1/getYuan'
-const saveMood = url + 'user/v1/saveMood'
+const addMood = url + 'user/v1/addMood'
 const getMood = url + 'user/v1/getMood'
 const resetBind = url + 'user/v1/resetBind'
 const finishBind = url + 'user/v1/finishBind'
@@ -29,7 +29,7 @@ export default {
 	getUserInfo,
 	addYuan,
 	getYuan,
-	saveMood,
+	addMood,
 	getMood,
 	getAllUser,
 	resetBind,
