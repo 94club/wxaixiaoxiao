@@ -11,8 +11,6 @@
 			return {
 			}
 		},
-		onLoad: function() {
-		},
 		methods: {
 			wechatLogin () {
 				let that = this
@@ -35,6 +33,9 @@
 							uni.login({
 								success: (code) => {
 									if (code.code) {
+										uni.showLoading({
+											title: '登录中，请稍后'
+										})
 										uni.request({
 												url: that.$constant.wechatLogin,
 												method: "post",
@@ -42,6 +43,7 @@
 													code: code.code
 												},
 												success: (res) => {
+													uni.hideLoading()
 													if (res.data.status === 0) {
 														uni.showToast({
 															icon:'none',
@@ -66,6 +68,7 @@
 													}
 												},
 												fail: () => {
+													uni.hideLoading()
 													uni.showToast({
 														title: '网络错误',
 														icon: 'none'
@@ -109,14 +112,18 @@
 									uni.login({
 										success: (code) => {
 											if (code.code) {
+												uni.showLoading({
+													title: '注册中，请稍后'
+												})
 												uni.request({
 													url: this.$constant.wechatRegister,
 													method: 'POST',
 													data: {code: code.code, nickName: weInfo.nickName, avatarUrl: weInfo.avatarUrl},
 													success: (res) => {
+														uni.hideLoading()
 														if (res.data.status === 401) {
 															uni.redirectTo({
-																url: '/pages/index/index'
+																url: '/login/index/index'
 															})
 															uni.showToast({
 																icon: 'none',
@@ -145,6 +152,13 @@
 																title: res.data.message
 															})
 														}
+													},
+													fail: () => {
+														uni.hideLoading()
+														uni.showToast({
+															title: "网络异常，请重新请求",
+															icon: "none"
+														})
 													}
 												})
 											} else {

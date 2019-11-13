@@ -147,7 +147,7 @@ export default {
 				success: res => {
 					if (res.data.status === 401) {
 						uni.redirectTo({
-							url: '/pages/index/index'
+							url: '/login/index/index'
 						});
 						uni.showToast({
 							icon: 'none',
@@ -194,7 +194,7 @@ export default {
 				success: res => {
 					if (res.data.status === 401) {
 						uni.redirectTo({
-							url: '/pages/index/index'
+							url: '/login/index/index'
 						});
 						uni.showToast({
 							icon: 'none',

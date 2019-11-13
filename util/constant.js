@@ -7,6 +7,20 @@ const destination = [
 	'登录后请第一时间绑定另一个TA；登录后请第一时间绑定另一个TA；登录后请第一时间绑定另一个TA',
 	'有任何意见都可以加我微信feng--zao'
 ]
+const everyday = [
+	{
+		content: '今天天气不错',
+		createTime: '2019-11-12'
+	},
+	{
+		content: '今天天气不错2',
+		createTime: '2019-11-11'
+	},
+	{
+		content: '今天天气不错3',
+		createTime: '2019-11-10'
+	}
+]
 const postData = [{
 		"post_id": '1',
 		"uid": 1,
@@ -137,10 +151,12 @@ const addMood = url + 'user/v1/addMood'
 const getMood = url + 'user/v1/getMood'
 const resetBind = url + 'user/v1/resetBind'
 const finishBind = url + 'user/v1/finishBind'
+const getImagePath = url + 'user/v1/getImagePath'
 export default {
 	url,
 	wxUserReg,
 	postData,
+	everyday,
 	destination,
 	wechatLogin,
 	wechatRegister,
@@ -152,5 +168,6 @@ export default {
 	getMood,
 	getAllUser,
 	resetBind,
-	finishBind
+	finishBind,
+	getImagePath
 }

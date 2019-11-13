@@ -4,15 +4,15 @@
 		<view class="home-pic">
 			<view class="home-pic-base">
 				<view class="top-pic">
-					<image class="header" src="../../static/index/test/header06.jpg" @tap="goPublish"></image>
+					<image class="header" :src="userInfo.avatarUrl" @tap="goPublish"></image>
 				</view>
-				<view class="top-name">Liuxy</view>
+				<view class="top-name">{{userInfo.nickName}}</view>
 			</view>
 		</view>
 
-		<view class="moments__post" v-for="(post,index) in posts" :key="index" :id="'post-'+index">
+		<view class="moments__post" v-for="(post, index) in moodList" :key="index">
 			<view class="post-left">
-				<image class="post_header" :src="post.header_image"></image>
+				<image class="post_header" :src="post.headerImage"></image>
 			</view>
 
 			<view class="post_right">
@@ -20,12 +20,14 @@
 				<view id="paragraph" class="paragraph">{{post.content.text}}</view>
 				<!-- 相册 -->
 				<view class="thumbnails">
-					<view :class="post.content.images.length === 1?'my-gallery':'thumbnail'" v-for="(image, index_images) in post.content.images" :key="index_images">
-						<image class="gallery_img" lazy-load mode="aspectFill" :src="image" :data-src="image" @tap="previewImage(post.content.images,index_images)"></image>
+					<view :class="post.imageStrList.length === 1 ? 'my-gallery':'thumbnail'" 
+					v-for="(image, index_images) in post.imageStrList" :key="index_images">
+						<image class="gallery_img" lazy-load mode="aspectFill" :src="image" :data-src="image"
+						 @tap="previewImage(post.imageStrList, index_images)"></image>
 					</view>
 				</view>
 				<!-- 资料条 -->
-				<view class="toolbar">
+				<!-- <view class="toolbar">
 					<view class="timestamp">{{post.timestamp}}</view>
 					<view class="like" @tap="like(index)">
 						<image :src="post.islike===0?'../../static/index/islike.png':'../../static/index/like.png'"></image>
@@ -33,9 +35,9 @@
 					<view class="comment" @tap="comment(index)">
 						<image src="../../static/index/comment.png"></image>
 					</view>
-				</view>
+				</view> -->
 				<!-- 赞／评论区 -->
-				<view class="post-footer">
+			<!-- 	<view class="post-footer">
 					<view class="footer_content">
 						<image class="liked" src="../../static/index/liked.png"></image>
 						<text class="nickname" v-for="(user,index_like) in post.like" :key="index_like">{{user.username}}</text>
@@ -43,22 +45,20 @@
 					<view class="footer_content" v-for="(comment,comment_index) in post.comments.comment" :key="comment_index" @tap="reply(index,comment_index)">
 						<text class="comment-nickname">{{comment.username}}: <text class="comment-content">{{comment.content}}</text></text>
 					</view>
-				</view>
+				</view> -->
 			</view>
 			<!-- 结束 post -->
 		</view>
-
-		<view class="foot" v-show="showInput">
+		<!-- view class="foot" v-show="showInput">
 			<chat-input @send-message="send_comment" @blur="blur" :focus="focus" :placeholder="input_placeholder"></chat-input>
-			<!-- <chat-input @send-message="send_comment" @blur="blur" :placeholder="input_placeholder"></chat-input> -->
-		</view>
+			<chat-input @send-message="send_comment" @blur="blur" :placeholder="input_placeholder"></chat-input>
+		</view> -->
 		<view class="uni-loadmore" v-if="showLoadMore">{{loadMoreText}}</view>
 	</view>
-
 </template>
 
 <script>
-	import chatInput from '../../components/im-chat/chatinput.vue'; //input框
+	import chatInput from '../../components/im-chat/chatinput.vue'; // input框
 	import obj from '../../util/constant.js'
 	export default {
 		components: {
@@ -66,36 +66,22 @@
 		},
 		data() {
 			return {
-				posts: obj.postData,//模拟数据
+				posts: [],
 				user_id: 4,
-				username: 'Liuxy',
-
 				index: '',
 				comment_index: '',
-
-				input_placeholder: '评论', //占位内容
-				focus: false, //是否自动聚焦输入框
-				is_reply: false, //回复还是评论
-				showInput: false, //评论输入框
-
-				screenHeight: '', //屏幕高度(系统)
+				input_placeholder: '评论', // 占位内容
+				focus: false, // 是否自动聚焦输入框
+				is_reply: false, // 回复还是评论
+				showInput: false, // 评论输入框
+				screenHeight: '', // 屏幕高度(系统)
 				platform: '',
-				windowHeight: '' ,//可用窗口高度(不计入软键盘)
-				
+				windowHeight: '' ,// 可用窗口高度(不计入软键盘)
 				loadMoreText: "加载中...",
 				showLoadMore: false,
+				pageSize: 20,
+				pageNo: 1
 			}
-		},
-		mounted() {
-			
-			uni.getStorage({
-				key: 'posts',
-				success: function (res) {
-					console.log(res.data);
-					this.posts = res.data;
-				}
-			});
-
 		},
 		onLoad() {
 			uni.getSystemInfo({ //获取设备信息
@@ -107,28 +93,28 @@
 			uni.startPullDownRefresh();
 		},
 		onShow() {
-			uni.onWindowResize((res) => { //监听窗口尺寸变化,窗口尺寸不包括底部导航栏
-				if(this.platform === 'ios'){
+			uni.onWindowResize((res) => { // 监听窗口尺寸变化,窗口尺寸不包括底部导航栏
+				if (this.platform === 'ios') {
 					this.windowHeight = res.size.windowHeight;
 					this.adjust();
-				}else{
+				} else {
 					if (this.screenHeight - res.size.windowHeight > 60 && this.windowHeight <= res.size.windowHeight) {
 						this.windowHeight = res.size.windowHeight;
 						this.adjust();
 					}
 				}
-			});
+			})
 		},
-		onHide() {
-			uni.offWindowResize(); //取消监听窗口尺寸变化
+		onHide () {
+			uni.offWindowResize(); // 取消监听窗口尺寸变化
 		},
-		onUnload() {
+		onUnload () {
 			this.max = 0,
 				this.data = [],
 				this.loadMoreText = "加载更多",
 				this.showLoadMore = false;
 		},
-		onReachBottom() { //监听上拉触底事件
+		onReachBottom () { // 监听上拉触底事件
 			console.log('onReachBottom');
 			this.showLoadMore = true;
 			setTimeout(() => {
@@ -140,31 +126,25 @@
 				}
 			}, 1000);
 		},
-		onPullDownRefresh() { //监听下拉刷新动作
+		onPullDownRefresh () { // 监听下拉刷新动作
 			console.log('onPullDownRefresh');
 			// 这里获取数据
+			this.pageNo = 1
+			this.getMood()
 			setTimeout(function() {
 				//初始化数据
 				uni.stopPullDownRefresh(); //停止下拉刷新
 			}, 1000);
 		},
-		onNavigationBarButtonTap(e) {//监听标题栏点击事件
-			if (e.index == 0) {
-				this.navigateTo('../publish/publish')
+		computed: {
+			userInfo () {
+				return this.$store.state.userInfo
+			},
+			token () {
+				return this.$store.state.token
 			}
 		},
-		computed:{
-			
-		},
 		methods: {
-			test(){
-				this.navigateTo('../test/test');
-			},
-			navigateTo(url) {
-				uni.navigateTo({
-					url: url
-				});
-			},
 			like(index) {
 				if (this.posts[index].islike === 0) {
 					this.posts[index].islike = 1;
@@ -185,7 +165,7 @@
 				this.focus = true;
 				this.index = index;
 			},
-			adjust() { //当弹出软键盘发生评论动作时,调整页面位置pageScrollTo
+			adjust() { // 当弹出软键盘发生评论动作时,调整页面位置pageScrollTo
 				return;
 				uni.createSelectorQuery().selectViewport().scrollOffset(res => {
 					var scrollTop = res.scrollTop;
@@ -233,13 +213,13 @@
 				});
 				this.init_input();
 			},
-			init_input() {
+			init_input () {
 				this.showInput = false;
 				this.focus = false;
 				this.input_placeholder = '评论';
 				this.is_reply = false;
 			},
-			previewImage(imageList, image_index) {
+			previewImage (imageList, image_index) {
 				var current = imageList[image_index];
 				uni.previewImage({
 					current: current,
@@ -248,9 +228,12 @@
 			},
 			goPublish() {
 				uni.navigateTo({
-					url: '/pages/addMood/addMood'
+					url: '/right/addMood/addMood'
 				});
-			}
+			},
+			getMood () {
+				
+			},
 		}
 	}
 </script>
@@ -338,7 +321,6 @@
 	-ms-transform-origin: 100% 0%;
 	transform-origin: 100% 0%;
 	background-color: #ffffff;
-	
 	float: right
 }
 

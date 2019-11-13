@@ -2,7 +2,7 @@
 	<view>
 		<view class="task-top">
 			<uni-search-bar class="search-bar" :radius="100" @submit="submit" placeholder="搜索痕迹"/>
-			<uniSlidingMenu :activeIndex="activeIndex" />
+			<uniSlidingMenu :activeIndex="activeIndex" @change="changeActiveIndex" />
 		</view>
 		<view v-if="shareBoxShow" class="share-box">
 			<view class="content">快去分享小程序通知他/她吧;如已绑定，下拉刷新状态</view>
@@ -13,12 +13,12 @@
 		</view>
 		<view class="task-content">
 			<view class="task-statistic">
-				<view class="task-statistic-left">{{current === 0 ? yuanList.length + '条心愿痕迹' : moodList.length + '条心情痕迹'}}</view>
-				<view class="task-statistic-right">
+				<view class="task-statistic-left">{{activeIndex === 0 ? yuanList.length + '条心愿痕迹' : moodList.length + '条心情痕迹'}}</view>
+				<view class="task-statistic-right" v-if="activeIndex === 0">
 					<uni-segmented-control :current="current" :values="items" @clickItem="onClickItem" style-type="button" active-color="#4cd964"></uni-segmented-control>
 				</view>
 			</view>
-			<view class="task-list" v-if="activeIndex === '0'">
+			<view class="task-list" v-if="activeIndex === 0">
 				<view class="task-list-item" v-for="(item, yuanIndex) in yuanList" :key="yuanIndex">
 					{{item.id}}--
 				</view>
@@ -43,7 +43,7 @@
 				items: ['进行中','审核中','已完成'],
 				current: 0,
 				status: 0,
-				activeIndex: '0',
+				activeIndex: 0,
 				reason: 2, // 默认首页搜索  
 				yuanList: [],
 				moodList: [],
@@ -74,7 +74,7 @@
 			return {
 				title: '艾小小和风早早',
 				// 要转发至路径
-				path: 'pages/guide/guide'
+				path: '/pages/guide/guide'
 			}
 		},
 	  onPullDownRefresh() {
@@ -96,7 +96,7 @@
 						if (res.confirm) {
 							console.log('用户点击确定')
 							uni.navigateTo({
-								url: '/pages/bindName/bindName'
+								url: '/left/bindName/bindName'
 							})
 						} else if (res.cancel) {
 							console.log('用户点击取消')
@@ -127,7 +127,7 @@
 								success: (res) => {
 									if (res.data.status === 401) {
 										uni.redirectTo({
-											url: '/pages/index/index'
+											url: '/login/index/index'
 										})
 										uni.showToast({
 											icon: 'none',
@@ -174,7 +174,7 @@
 								success: (res) => {
 									if (res.data.status === 401) {
 										uni.redirectTo({
-											url: '/pages/index/index'
+											url: '/login/index/index'
 										})
 										uni.showToast({
 											icon: 'none',
@@ -227,6 +227,10 @@
 			this.getYuanList()
 		},
 		methods: {
+			changeActiveIndex (activeIndex) {
+				console.log(activeIndex )
+				this.activeIndex = activeIndex
+			},
 			getYuanList () {
 				if (this.current === 0) {
 					this.status = 1
@@ -252,7 +256,7 @@
 					success: (res) => {
 						if (res.data.status === 401) {
 							uni.redirectTo({
-								url: '/pages/index/index'
+								url: '/login/index/index'
 							})
 							uni.showToast({
 								icon: 'none',
@@ -285,7 +289,7 @@
 					success: (res) => {
 						if (res.data.status === 401) {
 							uni.redirectTo({
-								url: '/pages/index/index'
+								url: '/login/index/index'
 							})
 							uni.showToast({
 								icon: 'none',
@@ -294,6 +298,9 @@
 						}
 						if (res.data.status === 200) {
 							this.$store.commit('saveUserInfo', res.data.data)
+							if (this.userInfo.isBind === 3) {
+								this.shareBoxShow = false
+							}
 						}
 						if (res.data.status === 0) {
 							uni.showToast({

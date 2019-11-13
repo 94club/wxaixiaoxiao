@@ -8,7 +8,7 @@
 		<view class="info-top mt88">
 			<view class="info-top-left">
 				<!-- <image :src="userInfo.avatarUrl"></image> -->
-				<image src="https://placehold.it/375x80" mode=""></image>
+				<image :src="userInfo.avatarUrl" mode=""></image>
 			</view>
 			<view class="info-top-right">
 				<view class="info-top-right-top">
@@ -69,9 +69,16 @@ import uniIcon from '../../components/uni-icons.vue'
 			height: 100%;
 			text-align: center;
 			image {
-				width: 144upx;
-				height: 144upx;
-				border-radius: 10upx;
+				width: 360upx;
+				height: 360upx;
+				border-radius: 40upx;
+				-webkit-transform: scale(0.5);
+				-ms-transform: scale(0.5);
+				transform: scale(0.5);
+				-webkit-transform-origin: 100% 0%;
+				-ms-transform-origin: 100% 0%;
+				transform-origin: 100% 0%;
+				background-color: #ffffff;
 			}
 		}
 		&-right {

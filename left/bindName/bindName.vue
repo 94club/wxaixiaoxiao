@@ -62,12 +62,10 @@
 				}
 			},
 			getAllUser () {
-				let token = uni.getStorageSync('token')
 				uni.request({
 					url: this.$constant.getAllUser,
 					header: {
-						// 'Authorization': 'Bearer ' + this.token
-						'Authorization': 'Bearer ' + token
+						'Authorization': 'Bearer ' + this.token
 					},
 					data: {
 						id: this.userInfo.id
@@ -75,7 +73,7 @@
 					success: (res) => {
 						if (res.data.status === 401) {
 							uni.redirectTo({
-								url: '/pages/index/index'
+								url: '/login/index/index'
 							})
 							uni.showToast({
 								icon: 'none',
@@ -101,17 +99,15 @@
 				})
 			},
 			getUserInfo () {
-				let token = uni.getStorageSync('token')
 				uni.request({
 					url: this.$constant.getUserInfo,
 					header: {
-						// 'Authorization': 'Bearer ' + this.token
-						'Authorization': 'Bearer ' + token
+						'Authorization': 'Bearer ' + this.token
 					},
 					success: (res) => {
 						if (res.data.status === 401) {
 							uni.redirectTo({
-								url: '/pages/index/index'
+								url: '/login/index/index'
 							})
 							uni.showToast({
 								icon: 'none',
@@ -151,7 +147,9 @@
 					})
 					return
 				}
-				let token = uni.getStorageSync('token')
+				uni.showLoading({
+					title: '绑定中，请稍后'
+				})
 				uni.request({
 					url: this.$constant.wechatRegisterName,
 					method: 'POST',
@@ -162,13 +160,13 @@
 					  userId: this.userId
 					},
 					header: {
-						// 'Authorization': 'Bearer ' + this.token
-						'Authorization': 'Bearer ' + token
+						'Authorization': 'Bearer ' + this.token
 					},
 					success: (res) => {
+						uni.hideLoading()
 						if (res.data.status === 401) {
 							uni.redirectTo({
-								url: '/pages/index/index'
+								url: '/login/index/index'
 							})
 							uni.showToast({
 								icon: 'none',
@@ -176,6 +174,10 @@
 							})
 						}
 						if (res.data.status === 200) {
+							uni.showToast({
+								title: '请求成功',
+								icon: 'none'
+							})
 							// 绑定成功
 							this.getUserInfo()
 						}
@@ -187,6 +189,7 @@
 						}
 					},
 					fail: () => {
+						uni.hideLoading()
 						uni.showToast({
 							icon: 'none',
 							title: '网络错误，请检查网络'

@@ -9,18 +9,18 @@
 		{
 			"path": "pages/tabbar/mine"
 		},
-		// {
-		// 	"path": "pages/tabbar/mood",
-		// 	"style": {
-		// 		"enablePullDownRefresh": true
-		// 	}
-		// },
-		// {
-		// 	"path": "pages/tabbar/yuan",
-		// 	"style": {
-		// 		"enablePullDownRefresh": true
-		// 	}
-		// },
+		{
+			"path": "pages/tabbar/mood",
+			"style": {
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/tabbar/yuan",
+			"style": {
+				"enablePullDownRefresh": true
+			}
+		},
 		{
 			"path": "pages/tabbar/index",
 			"style": {
@@ -55,7 +55,7 @@
 				{
 					"path": "bindName/bindName",
 					"style": {
-						"navigationBarTitleText": "绑定昵称"
+						"navigationBarTitleText": "绑定对方"
 					}
 				}
 			]
@@ -66,7 +66,7 @@
 				{
 					"path" : "addMood/addMood",
 					"style" : {
-						"navigationBarTitleText": "艾小小和风早早"
+						"navigationBarTitleText": "发表心情"
 					}
         }
 			]
@@ -96,18 +96,18 @@
 				"selectedIconPath": "static/apiHL.png",
 				"text": "首页"
 			}, 
-			// {
-			// 	"pagePath": "pages/tabbar/yuan",
-			// 	"iconPath": "static/api.png",
-			// 	"selectedIconPath": "static/apiHL.png",
-			// 	"text": "心愿"
-			// }, 
-			// {
-			// 	"pagePath": "pages/tabbar/mood",
-			// 	"iconPath": "static/extui.png",
-			// 	"selectedIconPath": "static/extuiHL.png",
-			// 	"text": "心情"
-			// }, 
+			{
+				"pagePath": "pages/tabbar/yuan",
+				"iconPath": "static/api.png",
+				"selectedIconPath": "static/apiHL.png",
+				"text": "心愿"
+			}, 
+			{
+				"pagePath": "pages/tabbar/mood",
+				"iconPath": "static/extui.png",
+				"selectedIconPath": "static/extuiHL.png",
+				"text": "心情"
+			}, 
 			{
 				"pagePath": "pages/tabbar/tool",
 				"iconPath": "static/extui.png",

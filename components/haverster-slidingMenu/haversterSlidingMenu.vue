@@ -24,22 +24,19 @@ export default {
 		color:{
 			type:String,
 			default:'#777777'
-		},
-		activeIndex: {
-			type: String,
-			default: '0'
 		}
 	},
 	data() {
 		return {
 			// list: ['首页1', '首页2', '首页3', '首页4', '首页4', '首页4', '首页4', '首页4'],
-			// activeIndex:"0"
+			activeIndex: '0'
 		};
 	},
 	methods:{
 		getActive(index){
-			this.activeIndex=index;
-			this.$emit("changes",this.activeIndex);
+			this.activeIndex = index;
+			console.log(this.activeIndex )
+			this.$emit("change", this.activeIndex);
 		}
 	}
 };
