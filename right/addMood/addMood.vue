@@ -181,9 +181,13 @@
 				}
 			},
 			addMood () {
-				this.imageStrList.map((item, index) => {
-					item = 'https://xiaoai.jiaxiu.club' + item
-				})
+				// this.imageStrList = this.imageStrList.map(item => 
+				// 	item = 'https://xiaoai.jiaxiu.club' + item
+				// )
+				this.imageStrList = this.imageStrList.map((item) => {
+						return 'https://xiaoai.jiaxiu.club' + item
+					}
+				)
 				uni.request({
 					url: this.$constant.addMood,
 					header: {

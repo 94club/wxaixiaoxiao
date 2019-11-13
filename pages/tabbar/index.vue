@@ -23,7 +23,7 @@
 					{{item.id}}--
 				</view>
 			</view>
-			<view class="task-list" v-if="activeIndex === '1'">
+			<view class="task-list" v-if="activeIndex === 1">
 				<view class="task-list-item"  v-for="(item, moodIndex) in moodList" :key="moodIndex">
 					{{mood.id}}--
 				</view>
@@ -49,8 +49,7 @@
 				moodList: [],
 				shareBoxShow: false,
 				pageSize: 20,
-				pageNo: 1,
-				operationFlag: 1, // 1 刚进来 或者下拉刷新 或者新增   2 上拉加载
+				pageNo: 1
 			}
 		},
 		computed: {
@@ -78,7 +77,6 @@
 			}
 		},
 	  onPullDownRefresh() {
-			this.operationFlag = 1
 			this.getUserInfo() // 刷新绑定信息
 			this.getYuanList()
 			setTimeout(function () {
@@ -209,7 +207,6 @@
 			if (this.userInfo.isBind === 2 && !this.userInfo.cpName) {
 				this.shareBoxShow = true
 			}
-			this.operationFlag = 1
 			this.getYuanList()
 		},
 		onLoad () {
@@ -217,7 +214,6 @@
 		},
 		onReachBottom () {
 			this.pageNo++
-			this.operationFlag = 2
 			uni.showLoading({
 				title: '加载'
 			})
@@ -264,11 +260,10 @@
 							})
 						}
 						if (res.data.status === 200) {
-							if (this.operationFlag === 1) {
-								this.yuanList = res.data.data
-							}
-							if (this.operationFlag === 2) {
+							if (this.pageNo > 1) {
 								this.yuanList = this.yuanList.concat(res.data.data)
+							} else {
+								this.yuanList = res.data.data
 							}
 						}
 						if (res.data.status === 0) {

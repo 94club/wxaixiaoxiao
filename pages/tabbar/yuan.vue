@@ -64,7 +64,6 @@ export default {
 		};
 	},
 	onPullDownRefresh() {
-		this.operationFlag = 1
 		this.getUserInfo() // 刷新绑定信息
 		this.getYuanList()
 		setTimeout(function () {
@@ -73,7 +72,6 @@ export default {
 	},
 	onReachBottom () {
 		this.pageNo++
-		this.operationFlag = 2
 		uni.showLoading({
 			title: '加载'
 		})
@@ -85,7 +83,6 @@ export default {
 	onShow() {
 		// 获取自己的心愿
 		if (this.userInfo.isBind === 3) {
-			this.operationFlag = 1
 			this.getYuanList();
 		}
 	},
@@ -202,11 +199,13 @@ export default {
 						});
 					}
 					if (res.data.status === 200) {
-						if (this.operationFlag === 1) {
-							this.yuanList = res.data.data
-						}
-						if (this.operationFlag === 2) {
-							this.yuanList = this.yuanList.concat(res.data.data)
+						let list = res.data.data
+						if (list.length > 0) {
+							if (this.pageNo > 1) {
+								this.yuanList = this.yuanList.concat(res.data.data)
+							} else {
+								this.yuanList = res.data.data
+							}
 						}
 					}
 					if (res.data.status === 0) {

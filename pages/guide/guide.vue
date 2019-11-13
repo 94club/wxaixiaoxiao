@@ -34,6 +34,7 @@
 						}
 						if (res.data.status === 200) {
 							this.$store.commit('saveUserInfo', res.data.data)
+							this.$store.commit('saveToken', token)
 							uni.switchTab({
 								url: '/pages/tabbar/index'
 							})
