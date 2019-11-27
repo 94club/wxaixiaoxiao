@@ -10,14 +10,14 @@
 			</view>
 		</view>
 
-		<view class="moments__post" v-for="(post, index) in moodList" :key="index">
+		<view class="moments__post" v-for="(post, index) in posts" :key="index">
 			<view class="post-left">
 				<image class="post_header" :src="post.headerImage"></image>
 			</view>
 
 			<view class="post_right">
 				<text class="post-username">{{post.username}}</text>
-				<view id="paragraph" class="paragraph">{{post.content.text}}</view>
+				<view id="paragraph" class="paragraph">{{post.des}}</view>
 				<!-- 相册 -->
 				<view class="thumbnails">
 					<view :class="post.imageStrList.length === 1 ? 'my-gallery':'thumbnail'" 
@@ -90,7 +90,6 @@
 					this.platform = res.platform;
 				}
 			});
-			uni.startPullDownRefresh();
 		},
 		onShow() {
 			uni.onWindowResize((res) => { // 监听窗口尺寸变化,窗口尺寸不包括底部导航栏
@@ -104,29 +103,20 @@
 					}
 				}
 			})
+			this.pageNo = 1
+			this.getMood()
 		},
 		onHide () {
 			uni.offWindowResize(); // 取消监听窗口尺寸变化
 		},
 		onUnload () {
-			this.max = 0,
-				this.data = [],
-				this.loadMoreText = "加载更多",
-				this.showLoadMore = false;
+			this.posts = []
+			this.showLoadMore = false
 		},
 		onReachBottom () { // 监听上拉触底事件
 			console.log('onReachBottom');
 			this.showLoadMore = true;
 			this.pageNo++
-			setTimeout(() => {
-				//获取数据
-				if (this.posts.length < 20){//测试数据
-					this.posts = this.posts.concat(this.posts);
-				}else{
-					this.loadMoreText = "暂无更多";
-				}
-				
-			}, 1000);
 			this.getMood()
 		},
 		onPullDownRefresh () { // 监听下拉刷新动作
@@ -235,8 +225,45 @@
 				});
 			},
 			getMood () {
-				
-			},
+				uni.request({
+					url: this.$constant.getMood,
+					header: {
+						Authorization: 'Bearer ' + this.token
+					},
+					data: {
+						userId: this.userInfo.id,
+						pageSize: this.pageSize,
+						pageNo: this.pageNo
+					},
+					success: res => {
+						if (res.data.status === 401) {
+							uni.redirectTo({
+								url: '/login/index/index'
+							});
+							uni.showToast({
+								icon: 'none',
+								title: '登录信息失效，请重新登录'
+							});
+						}
+						if (res.data.status === 200) {
+							let list = res.data.data
+							if (list.length > 0) {
+								if (this.pageNo > 1) {
+									this.posts = this.posts.concat(list)
+								} else {
+									this.posts = list
+								}
+							}
+						}
+						if (res.data.status === 0) {
+							uni.showToast({
+								icon: 'none',
+								title: res.data.message
+							});
+						}
+					}
+				});
+			}
 		}
 	}
 </script>
