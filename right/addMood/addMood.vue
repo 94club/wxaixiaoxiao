@@ -194,8 +194,7 @@
 						userId: this.userInfo.id,
 						nickName: this.userInfo.nickName,
 						des: this.input_content,
-						imageStrList: this.imageStrList,
-						headerImage: this.userInfo.avatarUrl
+						imageStrList: this.imageStrList
 					},
 					success: (res) => {
 						uni.hideLoading()

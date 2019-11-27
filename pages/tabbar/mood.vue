@@ -117,6 +117,7 @@
 		onReachBottom () { // 监听上拉触底事件
 			console.log('onReachBottom');
 			this.showLoadMore = true;
+			this.pageNo++
 			setTimeout(() => {
 				//获取数据
 				if (this.posts.length < 20){//测试数据
@@ -124,7 +125,9 @@
 				}else{
 					this.loadMoreText = "暂无更多";
 				}
+				
 			}, 1000);
+			this.getMood()
 		},
 		onPullDownRefresh () { // 监听下拉刷新动作
 			console.log('onPullDownRefresh');

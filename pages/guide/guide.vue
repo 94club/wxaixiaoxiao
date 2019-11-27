@@ -1,6 +1,7 @@
 <template>
 	<view>
 		这是引导界面
+		<view class="dount"></view>
 	</view>
 </template>
 
@@ -58,5 +59,23 @@
 </script>
 
 <style lang="scss">
+.dount {
+  width: 30px;
+  height: 30px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-left-color: red;
+  animation: dount-ani 1.2s linear infinite;
+}
+
+@keyframes dount-ani {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 </style>
